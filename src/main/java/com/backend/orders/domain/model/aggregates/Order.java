@@ -1,5 +1,6 @@
 package com.backend.orders.domain.model.aggregates;
 
+import com.backend.orders.domain.model.commands.CreateOrderCommand;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
+import reactor.core.publisher.Flux;
 
 import java.util.Date;
 import java.util.List;
@@ -20,10 +22,11 @@ public class Order {
     @Id
     private String id;
 
-    private Customer customer;
+    private String customer;
 
-    private List<Product> products;
+    private Flux<Product> products;
 
+    @Column(nullable = false)
     private Double total;
 
     @CreatedDate
@@ -33,4 +36,17 @@ public class Order {
     @LastModifiedDate
     @Column(nullable = false)
     private Date updatedAt;
+
+    public Order(CreateOrderCommand command) {
+        this.customer = command.customerId();
+        this.products = command.products();
+        this.total = command.total();
+    }
+
+    public Order updateInformation(String customer, Flux<Product> products, double total) {
+        this.customer = customer;
+        this.products = products;
+        this.total = total;
+        return this;
+    }
 }

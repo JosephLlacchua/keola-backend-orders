@@ -6,15 +6,16 @@ import com.backend.orders.domain.model.commands.DeleteOrderCommand;
 import com.backend.orders.domain.model.commands.UpdateOrderCommand;
 import com.backend.orders.domain.model.queries.GetAllOrdersQuery;
 import com.backend.orders.domain.model.queries.GetOrderByIdQuery;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import java.util.List;
-import java.util.Optional;
+
 
 public interface OrderService {
-    Optional<Order> handle(CreateOrderCommand command);
-    Optional<Order> handle(UpdateOrderCommand command);
-    void handle(DeleteOrderCommand command);
+    Mono<Order> handle(CreateOrderCommand command);
+    Mono<Order> handle(UpdateOrderCommand command);
+    Mono<Void> handle(DeleteOrderCommand command);
 
-    Optional<Order> handle(GetOrderByIdQuery query);
-    List<Order> handle(GetAllOrdersQuery query);
+    Mono<Order> handle(GetOrderByIdQuery query);
+    Flux<Order> handle(GetAllOrdersQuery query);
 }

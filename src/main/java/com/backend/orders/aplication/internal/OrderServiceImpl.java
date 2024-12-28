@@ -1,41 +1,80 @@
 package com.backend.orders.aplication.internal;
 
 import com.backend.orders.domain.model.aggregates.Order;
+import com.backend.orders.domain.model.aggregates.Product;
 import com.backend.orders.domain.model.commands.CreateOrderCommand;
 import com.backend.orders.domain.model.commands.DeleteOrderCommand;
 import com.backend.orders.domain.model.commands.UpdateOrderCommand;
 import com.backend.orders.domain.model.queries.GetAllOrdersQuery;
 import com.backend.orders.domain.model.queries.GetOrderByIdQuery;
 import com.backend.orders.domain.services.OrderService;
+import com.backend.orders.infrastructure.persistence.jpa.repositories.CustomerRepository;
+import com.backend.orders.infrastructure.persistence.jpa.repositories.OrderRepository;
+import com.backend.orders.infrastructure.persistence.jpa.repositories.ProductRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Service
 public class OrderServiceImpl implements OrderService {
-    @Override
-    public Optional<Order> handle(CreateOrderCommand command) {
-        return Optional.empty();
+
+    private final OrderRepository orderRepository;
+    private final CustomerRepository customerRepository;
+    private final ProductRepository productRepository;
+
+    public OrderServiceImpl(OrderRepository orderRepository, CustomerRepository customerRepository, ProductRepository productRepository) {
+        this.orderRepository = orderRepository;
+        this.customerRepository = customerRepository;
+        this.productRepository = productRepository;
     }
 
     @Override
-    public Optional<Order> handle(UpdateOrderCommand command) {
-        return Optional.empty();
+    public Mono<Order> handle(CreateOrderCommand command) {
+        return customerRepository.findById(Long.valueOf(command.customerId()))
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("Customer not found: " + command.customerId())))
+                .flatMap(customer -> {
+                    Flux<Product> products = command.products()
+                            .flatMap(product -> productRepository.findById(product.getId())
+                                    .switchIfEmpty(Mono.error(new IllegalArgumentException("Product not found: " + product.getId()))));
+                    return products.collectList()
+                            .flatMap(productList -> {
+                                Order order = new Order(command);
+                                return orderRepository.save(order);
+                            });
+                });
     }
 
     @Override
-    public void handle(DeleteOrderCommand command) {
-
+    public Mono<Order> handle(UpdateOrderCommand command) {
+        return orderRepository.findById(command.orderId())
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("Order not found: " + command.orderId())))
+                .flatMap(order -> {
+                    Flux<Product> products = command.products()
+                            .flatMap(product -> productRepository.findById(product.getId())
+                                    .switchIfEmpty(Mono.error(new IllegalArgumentException("Product not found: " + product.getId()))));
+                    return products.collectList()
+                            .flatMap(productList -> {
+                                order.updateInformation(command.customerId(), command.products(), command.total());
+                                return orderRepository.save(order);
+                            });
+                });
     }
 
     @Override
-    public Optional<Order> handle(GetOrderByIdQuery query) {
-        return Optional.empty();
+    public Mono<Void> handle(DeleteOrderCommand command) {
+        return orderRepository.findById(command.orderId())
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("Order not found: " + command.orderId())))
+                .flatMap(orderRepository::delete);
     }
 
     @Override
-    public List<Order> handle(GetAllOrdersQuery query) {
-        return List.of();
+    public Mono<Order> handle(GetOrderByIdQuery query) {
+        return orderRepository.findById(query.orderId())
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("Order not found: " + query.orderId())));
+    }
+
+    @Override
+    public Flux<Order> handle(GetAllOrdersQuery query) {
+        return orderRepository.findAll();
     }
 }

@@ -1,23 +1,26 @@
 package com.backend.orders.domain.model.commands;
 
+import com.backend.orders.domain.model.aggregates.Product;
+import reactor.core.publisher.Flux;
+
 public record UpdateOrderCommand(
-        Long orderId,
-        Long customerId,
-        Long productId,
-        Integer quantity
+        String orderId,
+        String customerId,
+        Flux<Product> products,
+        double total
 ) {
     public UpdateOrderCommand{
-        if(orderId==null || orderId<=0){
-            throw new IllegalArgumentException("orderId cannot be null or less than or equal to 0");
+        if(orderId==null || orderId.isBlank()){
+            throw new IllegalArgumentException("orderId cannot be null or empty");
         }
-        if(customerId==null || customerId<=0){
-            throw new IllegalArgumentException("customerId cannot be null or less than or equal to 0");
+        if(customerId==null || customerId.isBlank()){
+            throw new IllegalArgumentException("customerId cannot be null or empty");
         }
-        if(productId==null || productId<=0){
-            throw new IllegalArgumentException("productId cannot be null or less than or equal to 0");
+       if (products == null) {
+            throw new IllegalArgumentException("products cannot be null");
         }
-        if(quantity==null || quantity<=0){
-            throw new IllegalArgumentException("quantity cannot be null or less than or equal to 0");
+        if (total <= 0) {
+            throw new IllegalArgumentException("total must be greater than 0");
         }
 
     }

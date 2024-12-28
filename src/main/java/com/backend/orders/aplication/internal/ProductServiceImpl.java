@@ -4,20 +4,37 @@ import com.backend.orders.domain.model.aggregates.Product;
 import com.backend.orders.domain.model.commands.CreateProductCommand;
 import com.backend.orders.domain.model.queries.GetAllProductsQuery;
 import com.backend.orders.domain.services.ProductService;
+import com.backend.orders.infrastructure.persistence.jpa.repositories.ProductRepository;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ProductServiceImpl implements ProductService {
-    @Override
-    public Optional<Product> handle(CreateProductCommand command) {
-        return Optional.empty();
+
+    private final ProductRepository productRepository;
+
+    public ProductServiceImpl(ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
 
     @Override
-    public List<Product> handle(GetAllProductsQuery query) {
-        return List.of();
+    public Mono<Product> handle(CreateProductCommand command) {
+        return productRepository.existsByName(command.name())
+                .flatMap(existsByName -> {
+                    if (existsByName) {
+                        return Mono.error(new IllegalArgumentException("Product already exists: " + command.name()));
+                    }
+                    var product = new Product(command);
+                    return productRepository.save(product);
+                });
+    }
+
+    @Override
+    public Flux<Product> handle(GetAllProductsQuery query) {
+        return productRepository.findAll();
     }
 }
