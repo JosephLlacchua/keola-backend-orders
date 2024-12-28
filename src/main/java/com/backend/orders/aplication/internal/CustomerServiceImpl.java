@@ -4,13 +4,11 @@ import com.backend.orders.domain.model.aggregates.Customer;
 import com.backend.orders.domain.model.commands.CreateCustomerCommand;
 import com.backend.orders.domain.model.queries.GetAllCustomersQuery;
 import com.backend.orders.domain.services.CustomerService;
-import com.backend.orders.infrastructure.persistence.jpa.repositories.CustomerRepository;
+import com.backend.orders.infrastructure.persistence.repositories.CustomerRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {

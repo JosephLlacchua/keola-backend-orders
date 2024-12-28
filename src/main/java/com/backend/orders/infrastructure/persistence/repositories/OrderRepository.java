@@ -1,4 +1,4 @@
-package com.backend.orders.infrastructure.persistence.jpa.repositories;
+package com.backend.orders.infrastructure.persistence.repositories;
 
 import com.backend.orders.domain.model.aggregates.Order;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;

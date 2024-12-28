@@ -4,7 +4,7 @@ import com.backend.orders.domain.model.aggregates.Product;
 import com.backend.orders.domain.model.commands.CreateProductCommand;
 import com.backend.orders.domain.model.queries.GetAllProductsQuery;
 import com.backend.orders.domain.services.ProductService;
-import com.backend.orders.infrastructure.persistence.jpa.repositories.ProductRepository;
+import com.backend.orders.infrastructure.persistence.repositories.ProductRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
