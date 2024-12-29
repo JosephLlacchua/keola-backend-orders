@@ -2,7 +2,6 @@ package com.backend.orders.domain.model.aggregates;
 
 import com.backend.orders.domain.model.commands.CreateProductCommand;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,6 +10,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.relational.core.mapping.Table;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -35,10 +35,10 @@ public class Product {
     private Integer stock;
 
     @CreatedDate
-    private Date createdAt;
+    private LocalDateTime  createdAt;
 
     @LastModifiedDate
-    private Date updatedAt;
+    private LocalDateTime updatedAt;
 
     public Product(CreateProductCommand command) {
         this.name = command.name();

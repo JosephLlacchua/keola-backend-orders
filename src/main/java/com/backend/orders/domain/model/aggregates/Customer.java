@@ -12,6 +12,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.relational.core.mapping.Table;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 
@@ -36,10 +37,10 @@ public class Customer {
     private String address;
 
     @CreatedDate
-    private Date createdDate;
+    private LocalDateTime  createdDate;
 
     @LastModifiedDate
-    private Date lastModifiedDate;
+    private LocalDateTime lastModifiedDate;
 
 
     public Customer(CreateCustomerCommand command) {

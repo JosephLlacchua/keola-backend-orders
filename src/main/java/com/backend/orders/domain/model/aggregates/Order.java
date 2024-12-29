@@ -10,6 +10,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 import reactor.core.publisher.Flux;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -28,10 +29,10 @@ public class Order {
     private Double total;
 
     @CreatedDate
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     @LastModifiedDate
-    private Date updatedAt;
+    private LocalDateTime updatedAt;
 
     public Order(CreateOrderCommand command) {
         this.customer = command.customerId();

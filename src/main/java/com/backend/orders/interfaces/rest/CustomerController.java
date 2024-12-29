@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RestController
 @RequestMapping("/api/customers")
 @Tag(name = "Customer", description = "The Customer API")
@@ -38,7 +41,9 @@ public class CustomerController {
     @Operation(summary = "Get all customers")
     public Flux<CustomerDTO> getAllCustomers() {
         return customerService.handle(new GetAllCustomersQuery())
-                .map(CustomerDtoFromEntityAssembler::toDtoFromEntity)
-                .onErrorResume(e -> Flux.empty());
+                .map(CustomerDtoFromEntityAssembler::toDtoFromEntity);
     }
+
+
+
 }
