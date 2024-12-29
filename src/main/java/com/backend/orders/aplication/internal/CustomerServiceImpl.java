@@ -24,16 +24,16 @@ public class CustomerServiceImpl implements CustomerService {
         return customerRepository.existsByEmail(command.email())
                 .flatMap(existsByEmail -> {
                     if (existsByEmail) {
-                        return Mono.error(new IllegalArgumentException("Email already exists: " + command.email()));
+                        return Mono.error(new RuntimeException("Email already exists: " + command.email()));
                     }
-                    return customerRepository.existsByPhone(command.phone());
-                })
-                .flatMap(existsByPhone -> {
-                    if (existsByPhone) {
-                        return Mono.error(new IllegalArgumentException("Phone number already exists: " + command.phone()));
-                    }
-                    var customer = new Customer(command);
-                    return customerRepository.save(customer);
+                    return customerRepository.existsByPhone(command.phone())
+                            .flatMap(existsByPhone -> {
+                                if (existsByPhone) {
+                                    return Mono.error(new IllegalArgumentException("Phone number already exists: " + command.phone()));
+                                }
+                                var customer = new Customer(command);
+                                return customerRepository.save(customer);
+                            });
                 });
     }
 

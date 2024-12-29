@@ -33,8 +33,7 @@ public class CustomerController {
         var createDtoCommand = CreateCustomerCommandFromDtoAssembler.toCommandFromDto(createCustomerDTO);
         return customerService.handle(createDtoCommand)
                 .map(CustomerDtoFromEntityAssembler::toDtoFromEntity)
-                .map(ResponseEntity::ok)
-                .onErrorResume(e -> Mono.just(ResponseEntity.badRequest().build()));
+                .map(ResponseEntity::ok);
     }
 
     @GetMapping

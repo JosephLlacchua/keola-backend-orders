@@ -2,6 +2,7 @@ package com.backend.orders.domain.model.aggregates;
 
 import com.backend.orders.domain.model.commands.CreateProductCommand;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,10 +29,10 @@ public class Product {
     @NotBlank
     private String description;
 
-    @NotBlank
+    @NotNull
     private Double price;
 
-    @NotBlank
+    @NotNull
     private Integer stock;
 
     @CreatedDate

@@ -3,7 +3,7 @@ package com.backend.orders.domain.model.aggregates;
 
 import com.backend.orders.domain.model.commands.CreateCustomerCommand;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,7 +31,7 @@ public class Customer {
     @NotBlank
     private String email;
 
-    @Size(max =9)
+    @Pattern(regexp = "^[0-9]*$", message = "El número de teléfono debe tener 9 dígitos")
     private String phone;
 
     private String address;
